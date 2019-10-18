@@ -40,4 +40,14 @@ app.put('/projects/:id', (req, res) => {
   return res.json({ projects });
 });
 
+app.delete('/projects/:id', (req, res) => {
+  const { id } = req.params;
+
+  const projectIndex = projects.findIndex(project => project.id === id);
+
+  projects.splice(projectIndex, 1);
+
+  return res.json({ projects });
+});
+
 app.listen(3000);
