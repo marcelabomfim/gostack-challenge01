@@ -24,6 +24,19 @@ const checkProjectExists = (req, res, next) => {
   return next();
 };
 
+const validateBodyParams = expectedParams => (req, res, next) => {
+  const { body } = req;
+  const missingFields = expectedParams.filter(param => !(param in body));
+
+  if (missingFields.length) {
+    return res.status(400).json({
+      error: `Missing field${missingFields.length > 1 ? 's' : ''}: ${missingFields.join(', ')}`
+    });
+  }
+
+  return next();
+};
+
 const incrementRequestsCount = (req, res, next) => {
   requestsCount++;
   console.log('Request count:', requestsCount);
@@ -41,7 +54,7 @@ app.get('/projects', (req, res) => {
   return res.json({ projects });
 });
 
-app.post('/projects', (req, res) => {
+app.post('/projects', validateBodyParams(['id', 'title']), (req, res) => {
   const { id, title } = req.body;
 
   projects.push({
@@ -53,7 +66,7 @@ app.post('/projects', (req, res) => {
   return res.json({ projects });
 });
 
-app.put('/projects/:id', checkProjectExists, (req, res) => {
+app.put('/projects/:id', checkProjectExists, validateBodyParams(['title']),(req, res) => {
   const { projectIndex } = req;
   const { title } = req.body;
 
@@ -73,7 +86,7 @@ app.delete('/projects/:id', checkProjectExists, (req, res) => {
   return res.json({ projects });
 });
 
-app.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
+app.post('/projects/:id/tasks', checkProjectExists, validateBodyParams(['title']), (req, res) => {
   const { projectIndex } = req;
   const { title } = req.body;
 
