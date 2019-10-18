@@ -26,4 +26,18 @@ app.post('/projects', (req, res) => {
   return res.json({ projects });
 });
 
+app.put('/projects/:id', (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  const projectIndex = projects.findIndex(project => project.id === id);
+
+  projects[projectIndex] = {
+    ...projects[projectIndex],
+    title
+  };
+
+  return res.json({ projects });
+});
+
 app.listen(3000);
