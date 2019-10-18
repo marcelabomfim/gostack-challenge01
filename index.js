@@ -2,6 +2,7 @@ const express = require('express');
 
 // data
 const projects = [];
+let requestsCount = 0;
 
 // server
 const app = express();
@@ -22,6 +23,14 @@ const checkProjectExists = (req, res, next) => {
 
   return next();
 };
+
+const incrementRequestsCount = (req, res, next) => {
+  requestsCount++;
+  console.log('Request count:', requestsCount);
+  next();
+};
+
+app.all('*', incrementRequestsCount);
 
 // routes
 app.get('/', (req, res) => {
