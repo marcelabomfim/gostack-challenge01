@@ -1,11 +1,29 @@
 const express = require('express');
 
-const app = express();
-
-app.use(express.json());
-
+// data
 const projects = [];
 
+// server
+const app = express();
+
+// config
+app.use(express.json());
+
+// middlewares
+const checkProjectExists = (req, res, next) => {
+  const { id } = req.params;
+  const projectIndex = projects.findIndex(project => project.id === id);
+
+  if (projectIndex === -1) {
+    return res.status(400).json({ error: 'Project does not exists.'});
+  }
+
+  req.projectIndex = projectIndex;
+
+  return next();
+};
+
+// routes
 app.get('/', (req, res) => {
   return res.send('GoStack Challenge 01!');
 });
@@ -26,11 +44,9 @@ app.post('/projects', (req, res) => {
   return res.json({ projects });
 });
 
-app.put('/projects/:id', (req, res) => {
-  const { id } = req.params;
+app.put('/projects/:id', checkProjectExists, (req, res) => {
+  const { projectIndex } = req;
   const { title } = req.body;
-
-  const projectIndex = projects.findIndex(project => project.id === id);
 
   projects[projectIndex] = {
     ...projects[projectIndex],
@@ -40,21 +56,17 @@ app.put('/projects/:id', (req, res) => {
   return res.json({ projects });
 });
 
-app.delete('/projects/:id', (req, res) => {
-  const { id } = req.params;
-
-  const projectIndex = projects.findIndex(project => project.id === id);
+app.delete('/projects/:id', checkProjectExists, (req, res) => {
+  const { projectIndex } = req;
 
   projects.splice(projectIndex, 1);
 
   return res.json({ projects });
 });
 
-app.post('/projects/:id/tasks', (req, res) => {
-  const { id } = req.params;
+app.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
+  const { projectIndex } = req;
   const { title } = req.body;
-
-  const projectIndex = projects.findIndex(project => project.id === id);
 
   projects[projectIndex] = {
     ...projects[projectIndex],
