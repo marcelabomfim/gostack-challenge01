@@ -20,7 +20,7 @@ app.post('/projects', (req, res) => {
   projects.push({
     id,
     title,
-    taks: []
+    tasks: []
   });
 
   return res.json({ projects });
@@ -46,6 +46,20 @@ app.delete('/projects/:id', (req, res) => {
   const projectIndex = projects.findIndex(project => project.id === id);
 
   projects.splice(projectIndex, 1);
+
+  return res.json({ projects });
+});
+
+app.post('/projects/:id/tasks', (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  const projectIndex = projects.findIndex(project => project.id === id);
+
+  projects[projectIndex] = {
+    ...projects[projectIndex],
+    tasks: [...projects[projectIndex].tasks, title]
+  };
 
   return res.json({ projects });
 });
