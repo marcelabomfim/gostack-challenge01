@@ -1,0 +1,8 @@
+{
+  "name": "gostack-challenge01",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:marcelabomfim/gostack-challenge01.git",
+  "author": "Marcela Bomfim <mbomfim@live.com>",
+  "license": "MIT"
+}
